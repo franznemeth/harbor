@@ -27,6 +27,15 @@ cd $TEMP
 git apply $cur/redis.patch
 cd $cur
 
+cd $TEMP
+echo "Patching distribution/distribution to use go modules"
+curl -L -o go-mod.patch https://github.com/distribution/distribution/commit/5223c27422cc2c40901fe7e08053e3648b9b3300.patch
+git apply go-mod.patch || true
+echo "Done... now we can update the aws-sdk-go"
+curl -L -o aws-sdk-go.patch https://github.com/distribution/distribution/commit/6f84e87803301f7b844bf7ce09f1be4f3b351831.patch
+git apply -v aws-sdk-go.patch || true
+cd $cur
+
 echo 'build the registry binary ...'
 cp Dockerfile.binary $TEMP
 docker build -f $TEMP/Dockerfile.binary -t registry-golang $TEMP
